@@ -14,11 +14,10 @@ public class colorMasking implements PixelFilter, Interactive {
 
     public colorMasking(){
         colors=new ArrayList<>();
-        colors.add(new int[]{44, 28, 191});  // Blue target
+        colors.add(new int[]{30, 55, 150});  // Blue target
         colors.add(new int[]{50, 143, 50});  // Green target
-        colors.add(new int[]{255,0,0}); //red target
+        colors.add(new int[]{255,60,60}); //red target
         THRESHOLD = 45;
-
     }
     @Override
     public DImage processImage(DImage img) {
@@ -69,12 +68,6 @@ public class colorMasking implements PixelFilter, Interactive {
         short[][]red= img.getRedChannel();
         short[][]green=img.getGreenChannel();
         short[][]blue=img.getBlueChannel();
-
-//
-//        colors.add((int) red[mouseY][mouseX]);
-//        colors.add((int) green[mouseY][mouseX]);
-//        colors.add((int) blue[mouseY][mouseX]);
-        System.out.println(colors);
     }
 
 
