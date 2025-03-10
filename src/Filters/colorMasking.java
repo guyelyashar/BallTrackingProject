@@ -47,9 +47,29 @@ public class colorMasking implements PixelFilter, Interactive {
                 }
             }
         }
-
+        getCenter(red, green, blue);
         img.setColorChannels(red, green, blue);
         return img;
+    }
+
+    private void getCenter(short[][] red, short[][] green,short[][] blue) {
+        int redRowCount=0;
+        int redColCount=0;
+        int numTotalpixels=0;
+        for (int row = 0; row < red.length-1; row++) {
+            for (int col = 0; col < red[row].length-1; col++) {
+                if(red[row][col]==255){
+                    redRowCount += row;
+                    redColCount += col;
+                    numTotalpixels++;
+                }
+            }
+        }
+        int redRowAverage= redRowCount/numTotalpixels;
+        int redColAverage= redColCount/numTotalpixels;
+        red[redRowAverage][redColAverage]=127;
+        green[redRowAverage][redColAverage]=127;
+        blue[redRowAverage][redColAverage]=127;
     }
 
 
