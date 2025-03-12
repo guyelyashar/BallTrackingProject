@@ -43,7 +43,7 @@ public class DisplayWindow extends PApplet {
     private int initWidth = 900;
     private int initHeight = 800;
 
-    private static String DEFAULT_FILTER = "DoNothingFilter";
+    private static String DEFAULT_FILTER = "colorMasking";
 
     public void settings() {
         initializeImageSource(args);
