@@ -26,7 +26,11 @@ public class colorMasking implements PixelFilter, Interactive {
         for (int ro = 0; ro < red.length; ro++) {
             for (int co = 0; co < red[0].length; co++) {
                 boolean matched = false;
+                int [] tempTargetColor = new int[3];
                 for (int[] targetColor : colors) {
+                    tempTargetColor[0]=targetColor[0];
+                    tempTargetColor[1]=targetColor[1];
+                    tempTargetColor[2]=targetColor[2];
                     double distance = dist(ro, co, red, green, blue, targetColor[0], targetColor[1], targetColor[2]);
                     if (distance < THRESHOLD) {
                         matched = true;
@@ -35,9 +39,22 @@ public class colorMasking implements PixelFilter, Interactive {
                 }
 
                 if (matched) {
-                    red[ro][co] = 255;
-                    green[ro][co] = 255;
-                    blue[ro][co] = 255;
+                    if(tempTargetColor[0]==255 && tempTargetColor[1]==60 && tempTargetColor[2]==60){ //red
+                        red[ro][co] = 255;
+                        green[ro][co] = 255;
+                        blue[ro][co] = 255;
+                    }
+                    if(tempTargetColor[0]==50 && tempTargetColor[1]==143 && tempTargetColor[2]==50){ //green
+                        red[ro][co] = 170;
+                        green[ro][co] = 170;
+                        blue[ro][co] = 170;
+                    }
+                    if(tempTargetColor[0]==30 && tempTargetColor[1]==55 && tempTargetColor[2]==150){ //blue
+                        red[ro][co] = 85;
+                        green[ro][co] = 85;
+                        blue[ro][co] = 85;
+                    }
+
                 } else {
                     red[ro][co] = 0;
                     green[ro][co] = 0;
@@ -45,41 +62,39 @@ public class colorMasking implements PixelFilter, Interactive {
                 }
             }
         }
-        getCenter(red, green, blue);
+        getCenter(red, green, blue,img);
         img.setColorChannels(red, green, blue);
         return img;
     }
 
-    private void getCenter(short[][] red, short[][] green,short[][] blue) {
-        int redRowCount = 0;
-        int redColCount = 0;
+    private void getCenter(short[][] red, short[][] green,short[][] blue, DImage img) {
+        int rowCount = 0;
+        int colCount = 0;
         int numTotalpixels = 0;
-        int redRowAverage;
-        int redColAverage;
+        int rowAverage;
+        int colAverage;
 
         for (int row = 0; row < red.length; row++) {
             for (int col = 0; col < red[row].length; col++) {
                 if (red[row][col] == 255) {
-                    redRowCount += row;
-                    redColCount += col;
+                    rowCount += row;
+                    colCount += col;
                     numTotalpixels++;
                 }
             }
         }
 
         if (numTotalpixels == 0) {
-            redRowAverage = redRowCount;
-            redColAverage = redColCount;
+            rowAverage = rowCount;
+            colAverage = colCount;
         } else {
-            redRowAverage = redRowCount / numTotalpixels;
-            redColAverage = redColCount / numTotalpixels;
+            rowAverage = rowCount / numTotalpixels;
+            colAverage = colCount / numTotalpixels;
         }
 
-        System.out.println("Center: " + redColAverage + ", " + redRowAverage);
+        System.out.println("Center: " + colAverage + ", " + rowAverage);
 
-        red[redRowAverage][redColAverage] = 127;
-        green[redRowAverage][redColAverage] = 127;
-        blue[redRowAverage][redColAverage] = 127;
+        img[rowAverage][colAverage]=0; //fix this so it's 5X5 thing and loops.
     }
 
     private double dist(int row, int col, short[][] red, short[][] green, short[][] blue, int RedTargetColor, int GreenTargetColor, int BlueTargetColor){
