@@ -14,6 +14,7 @@ public class colorMasking implements PixelFilter, Interactive {
         colors.add(new int[]{30, 55, 150});  // Blue target
         colors.add(new int[]{50, 143, 50});  // Green target
         colors.add(new int[]{255, 60, 60}); // Red target
+        colors.add(new int[]{255, 140, 65}); //yellow target
         THRESHOLD = 45;
     }
 
@@ -41,18 +42,23 @@ public class colorMasking implements PixelFilter, Interactive {
                 if (matched) {
                     if(tempTargetColor[0]==255 && tempTargetColor[1]==60 && tempTargetColor[2]==60){ //red
                         red[ro][co] = 255;
-                        green[ro][co] = 255;
-                        blue[ro][co] = 255;
+                        green[ro][co] = 60;
+                        blue[ro][co] = 60;
                     }
                     if(tempTargetColor[0]==50 && tempTargetColor[1]==143 && tempTargetColor[2]==50){ //green
-                        red[ro][co] = 170;
-                        green[ro][co] = 170;
-                        blue[ro][co] = 170;
+                        red[ro][co] = 50;
+                        green[ro][co] = 143;
+                        blue[ro][co] = 50;
                     }
                     if(tempTargetColor[0]==30 && tempTargetColor[1]==55 && tempTargetColor[2]==150){ //blue
-                        red[ro][co] = 85;
-                        green[ro][co] = 85;
-                        blue[ro][co] = 85;
+                        red[ro][co] = 30;
+                        green[ro][co] = 55;
+                        blue[ro][co] = 150;
+                    }
+                    if(tempTargetColor[0]==255 && tempTargetColor[1]==140 && tempTargetColor[2]==65) { //yellow
+                        red[ro][co] = 255;
+                        green[ro][co] = 140;
+                        blue[ro][co] = 65;
                     }
 
                 } else {
@@ -93,8 +99,6 @@ public class colorMasking implements PixelFilter, Interactive {
         }
 
         System.out.println("Center: " + colAverage + ", " + rowAverage);
-
-        img[rowAverage][colAverage]=0; //fix this so it's 5X5 thing and loops.
     }
 
     private double dist(int row, int col, short[][] red, short[][] green, short[][] blue, int RedTargetColor, int GreenTargetColor, int BlueTargetColor){
