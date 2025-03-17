@@ -68,21 +68,24 @@ public class colorMasking implements PixelFilter, Interactive {
                 }
             }
         }
-        getCenter(red, green, blue,img);
+        getCenter(red, green, blue, 255, img);
+        getCenter(green, red, blue, 143, img);
+        getCenter(blue, red, green, 150, img);
+        getCenter(blue, red, green, 65, img);
         img.setColorChannels(red, green, blue);
         return img;
     }
 
-    private void getCenter(short[][] red, short[][] green,short[][] blue, DImage img) {
+    private void getCenter(short[][] color, short[][] otherColor1, short[][] otherColor2, int colorVal, DImage img) {
         int rowCount = 0;
         int colCount = 0;
         int numTotalpixels = 0;
         int rowAverage;
         int colAverage;
 
-        for (int row = 0; row < red.length; row++) {
-            for (int col = 0; col < red[row].length; col++) {
-                if (red[row][col] == 255) {
+        for (int row = 0; row < color.length; row++) {
+            for (int col = 0; col < color[row].length; col++) {
+                if (color[row][col] == colorVal) {
                     rowCount += row;
                     colCount += col;
                     numTotalpixels++;
@@ -98,7 +101,26 @@ public class colorMasking implements PixelFilter, Interactive {
             colAverage = colCount / numTotalpixels;
         }
 
-        System.out.println("Center: " + colAverage + ", " + rowAverage);
+        String colorName = "";
+
+        if (colorVal == 255) colorName = "Red";
+        else if (colorVal == 143) colorName = "Green";
+        else if (colorVal == 150) colorName = "Blue";
+        else if (colorVal == 65) colorName = "Yellow";
+
+
+        System.out.println("Center for " + colorName + " ball : " + colAverage + ", " + rowAverage);
+
+        if (rowAverage >= 2 && colAverage >= 2 && rowAverage <= img.getHeight() - 3 && colAverage <= img.getWidth() - 3) {
+            for (int i = rowAverage - 2; i <= rowAverage + 2; i++) {
+                for (int j = colAverage - 2; j <= colAverage + 2; j++) {
+                    color[i][j] = 255;
+                    otherColor1[i][j] = 255;
+                    otherColor2[i][j] = 255;
+                }
+            }
+        }
+
     }
 
     private double dist(int row, int col, short[][] red, short[][] green, short[][] blue, int RedTargetColor, int GreenTargetColor, int BlueTargetColor){
