@@ -3,6 +3,8 @@ package Filters;
 import Interfaces.Interactive;
 import Interfaces.PixelFilter;
 import core.DImage;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 public class colorMasking implements PixelFilter, Interactive {
@@ -109,8 +111,15 @@ public class colorMasking implements PixelFilter, Interactive {
         else if (colorVal == 65) colorName = "Yellow";
 
 
-        System.out.println("Center for " + colorName + " ball : " + colAverage + ", " + rowAverage);
+//        System.out.println("Center for " + colorName + " ball : " + colAverage + ", " + rowAverage);
+        if(color[rowAverage][colAverage]==0 && otherColor1[rowAverage][colAverage]==0 && otherColor2[rowAverage][colAverage]==0) { // if the coords are black then do multiple blob detection
+            placeDot(rowAverage,colAverage,color,otherColor1,otherColor2,img);
+        }else{
+            doubleBlobDetection(color, otherColor1,otherColor2, colorVal,img);
+        }
 
+    }
+    public void placeDot(int rowAverage, int colAverage, short [][] color, short[][] otherColor1, short[][] otherColor2, DImage img){
         if (rowAverage >= 2 && colAverage >= 2 && rowAverage <= img.getHeight() - 3 && colAverage <= img.getWidth() - 3) {
             for (int i = rowAverage - 2; i <= rowAverage + 2; i++) {
                 for (int j = colAverage - 2; j <= colAverage + 2; j++) {
@@ -121,6 +130,34 @@ public class colorMasking implements PixelFilter, Interactive {
             }
         }
 
+    }
+
+    public boolean doubleBlobDetection(short[][] color, short[][] otherColor1, short[][] otherColor2, int colorVal, DImage img){
+        ArrayList<Point> points=new ArrayList<>();
+        ArrayList<Integer> avgColorValues=new ArrayList<>();
+        int sumColor = 0;
+        int avgColor=0;
+        int numTotalpixels = 0;
+        for (int row = 30; row < color.length-30; row+=5) {
+            for (int col = 30; col < color[row].length-30; col+=5) {
+                if (color[row][col] == colorVal) {
+                    if (row >= 30 && col >= 30 && row <= img.getHeight() - 31 && col <= img.getWidth() - 31) {
+                        for (int i = row - 30; i <= row + 30; i++) {
+                            for (int j = col - 30; j <= col + 30; j++) {
+                                sumColor += color[i][j];
+                                numTotalpixels++;
+                            }
+                        }
+                    }
+                    avgColor= sumColor/numTotalpixels;
+                    avgColorValues.add(avgColor);
+                    points.add(new Point(row,col));
+                    System.out.println("AverageColor: "+avgColor+ ", targetColor: "+colorVal);
+                }
+            }
+        }
+        //now we need to loop over the avgColors that we did and then see which is the closest to the value we want and that is most likely the center.
+        return true;
     }
 
     private double dist(int row, int col, short[][] red, short[][] green, short[][] blue, int RedTargetColor, int GreenTargetColor, int BlueTargetColor){
