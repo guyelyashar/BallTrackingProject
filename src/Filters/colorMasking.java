@@ -6,6 +6,7 @@ import core.DImage;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class colorMasking implements PixelFilter, Interactive {
     private ArrayList<int[]> colors;  // Each element is an array of 3 integers: {R, G, B}
@@ -62,7 +63,6 @@ public class colorMasking implements PixelFilter, Interactive {
                         green[ro][co] = 140;
                         blue[ro][co] = 65;
                     }
-
                 } else {
                     red[ro][co] = 0;
                     green[ro][co] = 0;
@@ -113,9 +113,9 @@ public class colorMasking implements PixelFilter, Interactive {
 
 //        System.out.println("Center for " + colorName + " ball : " + colAverage + ", " + rowAverage);
         if(color[rowAverage][colAverage]==0 && otherColor1[rowAverage][colAverage]==0 && otherColor2[rowAverage][colAverage]==0) { // if the coords are black then do multiple blob detection
-            placeDot(rowAverage,colAverage,color,otherColor1,otherColor2,img);
-        }else{
             doubleBlobDetection(color, otherColor1,otherColor2, colorVal,img);
+        }else{
+            placeDot(rowAverage,colAverage,color,otherColor1,otherColor2,img);
         }
 
     }
@@ -132,6 +132,8 @@ public class colorMasking implements PixelFilter, Interactive {
 
     }
 
+
+
     public boolean doubleBlobDetection(short[][] color, short[][] otherColor1, short[][] otherColor2, int colorVal, DImage img){
         ArrayList<Point> points=new ArrayList<>();
         ArrayList<Integer> avgColorValues=new ArrayList<>();
@@ -141,6 +143,8 @@ public class colorMasking implements PixelFilter, Interactive {
         for (int row = 30; row < color.length-30; row+=5) {
             for (int col = 30; col < color[row].length-30; col+=5) {
                 if (color[row][col] == colorVal) {
+                    sumColor=0;
+                    numTotalpixels=0;
                     if (row >= 30 && col >= 30 && row <= img.getHeight() - 31 && col <= img.getWidth() - 31) {
                         for (int i = row - 30; i <= row + 30; i++) {
                             for (int j = col - 30; j <= col + 30; j++) {
@@ -156,9 +160,17 @@ public class colorMasking implements PixelFilter, Interactive {
                 }
             }
         }
+        for (int point = 0; point < avgColorValues.size()-1; point++) {
+            if(colorVal-avgColorValues.get(point)<10){
+                Point p = points.get(point);
+                placeDot(points.get(point).getRow(),points.get(point).getCol(),color,otherColor1,otherColor2,img);
+            }
+        }
+
         //now we need to loop over the avgColors that we did and then see which is the closest to the value we want and that is most likely the center.
         return true;
     }
+
 
     private double dist(int row, int col, short[][] red, short[][] green, short[][] blue, int RedTargetColor, int GreenTargetColor, int BlueTargetColor){
         int changeRed = Math.abs(RedTargetColor - red[row][col]);
